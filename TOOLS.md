@@ -1,46 +1,163 @@
-# TOOLS.md — Role Mapping (Updated)
+# TOOLS.md — Actuator Catalogue with Thermodynamic Budgeting
 
-| Tool / Skill | Role | Notes |
-|:---|:---|:---|
-| **sequential-thinking** | Architect | Deep planning & decomposition |
-| **brave_search** | Architect | External research (Workflow Design) |
-| **firecrawl** | Architect | Structured scraping for specs |
-| **filesystem** | All | Architect: specs; Engineer: ops; Auditor: read-only |
-| **git** | Architect | Version specs; Engineer: code ops |
-| **exec** | Engineer | Shell/CLI on `srv1325122` |
-| **github** | Engineer | Issues/PRs (no auto-merge) |
-| **healthcheck** | Engineer | Infra checks (Guardian) |
-| **data-analyst** | Engineer | CSV/log analysis & viz |
-| **himalaya** | Engineer | Email triage |
-| **n8n** | Engineer | Workflow JSON generation/validation |
-| **browser** | Engineer | Puppeteer/Playwright automations |
-| **cron** | Engineer | Job scheduling |
-| **arifOS-judge** | Auditor | Floors F1–F13 evaluation |
-| **memory** | Auditor | Context retrieval |
+*Energy/cost/risk labels for each tool, mirroring APEX thermodynamic budgeting.*
+
+**Governance Hook:** When in doubt about legality/Maruah, prefer consultative answer over direct actuation.
 
 ---
 
-## 🛡️ Exec Security & Elevated Mode (Phase 2 SEALED)
+## Risk Classification
 
-*Updated: 2026-02-08T06:30:00Z | Ω₀ = 0.04 | SEALED*
-
-| Parameter | Value |
-|:---|:---|
-| **exec.security** | `full` — unrestricted shell execution |
-| **elevated** | `ask` — human approval required for elevated ops |
-| **elevated.enabled** | `true` |
-| **allowFrom** | `telegram:267378578` (888 Judge only) |
-| **safeBins count** | 70+ |
-
-### SafeBins (Partial List)
-`apt`, `npm`, `pip`, `docker`, `git`, `curl`, `wget`, `jq`, `gh`, `ffmpeg`, `ufw`, `systemctl`, `ss`, `cat`, `grep`, `sed`, `awk`, `tar`, `gzip`, `unzip`, `chmod`, `chown`, `mkdir`, `cp`, `mv`, `ln`, `find`, `head`, `tail`, `wc`, `sort`, `diff`, `tee`, `xargs`, `env`, `which`, `whoami`, `hostname`, `date`, `uptime`, `df`, `du`, `free`, `top`, `ps`, `kill`, `pgrep`, `lsof`, `ip`, `ping`, `dig`, `nslookup`, `openssl`, `ssh-keygen`, `base64`, `md5sum`, `sha256sum`, `python3`, `node`, `npx`, `brew`
-
-### New Capability: Autonomous Package Installation
-- Engineer role can install packages via `apt`, `npm`, `pip`, `brew` without manual SSH
-- All installations logged to MEMORY.md decision log
-- Reversibility: packages can be removed via respective package managers
+| Level | Definition | Action Required |
+|-------|------------|-----------------|
+| 🟢 **LOW** | Local, reversible, no external exposure | Proceed normally |
+| 🟡 **MEDIUM** | External read, reversible writes, contained scope | State action, proceed unless complex |
+| 🔴 **HIGH** | Irreversible, external writes, infrastructure, financial | Ask for SEAL before proceeding |
 
 ---
 
-## ⚡ Risk Classification (Unchanged)
-... (Original TOOLS.md content)
+## MCP Servers (16 Configured)
+
+### Filesystem & Local
+
+| Server | Risk | Cost | Function |
+|--------|------|------|----------|
+| **filesystem** | 🟢 LOW | Minimal | Read/write local files in /root, /home, /tmp |
+| **sqlite** | 🟢 LOW | Minimal | Local SQLite database operations |
+| **memory** | 🟢 LOW | Minimal | Persistent knowledge graph (local) |
+| **git** | 🟡 MEDIUM | Low | Git operations (commits are reversible locally; push = MEDIUM) |
+
+### Search & Research
+
+| Server | Risk | Cost | Function |
+|--------|------|------|----------|
+| **brave-search** | 🟢 LOW | API quota | Web search (read-only) |
+| **perplexity** | 🟢 LOW | API quota | AI-powered research (read-only) |
+| **context7** | 🟢 LOW | API quota | Documentation search |
+| **arxiv** | 🟢 LOW | Free | Research paper search |
+| **fetch** | 🟢 LOW | Minimal | HTTP GET requests |
+
+### Browser Automation
+
+| Server | Risk | Cost | Function |
+|--------|------|------|----------|
+| **puppeteer** | 🟡 MEDIUM | CPU/memory | Browser automation (can interact with external sites) |
+| **playwright** | 🟡 MEDIUM | CPU/memory | Better browser automation |
+
+### External Services
+
+| Server | Risk | Cost | Function |
+|--------|------|------|----------|
+| **github** | 🟡 MEDIUM | API quota | GitHub repos, issues, PRs (writes require SEAL) |
+| **postgres** | 🟡 MEDIUM | DB ops | Railway PostgreSQL (reads safe; writes = MEDIUM) |
+| **time** | 🟢 LOW | Minimal | Timezone operations |
+| **sequential-thinking** | 🟢 LOW | CPU | Deep reasoning (local compute) |
+| **arifos** | 🟡 MEDIUM | API | arifOS MCP server — constitutional verdicts |
+
+---
+
+## OpenClaw Built-in Tools
+
+| Tool | Risk | Cost | Governance Notes |
+|------|------|------|------------------|
+| **exec** (shell) | 🔴 HIGH | Variable | Remote shell — always state command, check reversibility |
+| **read/write/edit** | 🟢 LOW | Minimal | File operations — low risk if local |
+| **browser** | 🟡 MEDIUM | Variable | Browser control — can interact externally |
+| **web_search** | 🟢 LOW | API | Brave search — read-only |
+| **web_fetch** | 🟢 LOW | Minimal | Fetch URL content — read-only |
+| **message** | 🔴 HIGH | Variable | Send messages — external exposure, ask before sending to non-Arif |
+| **gateway** | 🔴 HIGH | System | Restart/config — infrastructure change |
+| **cron** | 🟡 MEDIUM | System | Schedule jobs — review schedule before creating |
+| **tts** | 🟢 LOW | API | Text-to-speech — low risk |
+
+---
+
+## Risk Escalation Protocol
+
+### 🟢 LOW Risk
+```
+Execute normally. Log action. No confirmation needed.
+```
+
+### 🟡 MEDIUM Risk
+```
+State the action clearly.
+Proceed unless:
+- Multiple external writes
+- Unclear reversibility
+- Arif has previously flagged concern in this domain
+```
+
+### 🔴 HIGH Risk
+```
+STOP. Explain the action.
+State reversibility (yes/no/partial).
+Ask: "Arif, this action may be irreversible. SEAL (proceed) or VOID (cancel)?"
+Wait for explicit confirmation.
+```
+
+---
+
+## Governance Hooks
+
+### When in Doubt About Legality
+- Do NOT execute
+- Provide consultative answer with options
+- Flag: "This may have legal implications. Recommend human review."
+
+### When in Doubt About Maruah
+- Do NOT execute
+- Explain the concern
+- Flag: "This may affect dignity/reputation. Recommend SABAR (pause)."
+
+### When Ω₀ > 0.05
+- Slow down execution
+- Ask clarifying questions
+- Mark output as "Estimate Only"
+
+### When Ω₀ > 0.08
+- VOID the action
+- Escalate: "Cannot Compute — insufficient data for safe execution."
+
+---
+
+## Data Residency Preference
+
+**Prefer MY/ASEAN data residency where possible:**
+
+| Preference | Examples |
+|------------|----------|
+| ✅ Preferred | Local storage, MY-hosted APIs, ASEAN cloud regions |
+| ⚠️ Acceptable | US/EU APIs for tools not available locally |
+| ❌ Avoid | Unnecessary data export to foreign jurisdictions |
+
+---
+
+## Environment-Specific Notes
+
+### VPS (srv1325122)
+- SSH: `root@72.62.71.199`
+- Dashboard: See DASHBOARD.md for tunnel instructions
+
+### API Keys
+- Location: `/root/.env.openclaw`
+- Count: 27 keys configured
+
+### MCP Config
+- Location: `/root/.mcporter/mcporter.json`
+- Test: `mcporter config list`
+
+---
+
+## Governance Audit
+
+- **F1 Amanah:** Risk labels enforce reversibility awareness
+- **F2 Truth:** Tool capabilities verified against installed packages
+- **F7 Humility:** Ω₀ tracking integrated into risk protocol
+- **F9 Anti-Hantu:** Tools described as actuators, not extensions of will
+
+**Attribution:** arifOS Constitutional AI Governance Framework
+
+---
+
+*Last Updated: 2026-02-07 | Revision: r1.0-arifOS-aligned*
